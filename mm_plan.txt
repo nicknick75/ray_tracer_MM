@@ -1,0 +1,19 @@
+1. lista objektov z gradienti
+	1.1 sfera
+	1.2 ravnina
+	1.3 torus
+2. camera točka + kordiantna mapa (viewport)
+	2.1 p = vo + x*v1 +y*v2
+3. Newton methoda iskanja presečišča
+4. normala in kot med normalo in virom
+	1.Slika: Izris krogle
+5. določitev kotov odbojnega žarka :
+	5.1  q = p - 2*projn(p)
+	2.Slika: Izris krogle
+6. Senca
+7. barve objektov
+_____________________________________________
+Dodatno:
+	- lom žarkov
+	- (4)
+	- objektom dodava material (način odboja)
