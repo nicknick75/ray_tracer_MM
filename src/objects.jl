@@ -1,3 +1,9 @@
+struct Ray
+    origin::Vector{Float64}
+    direction::Vector{Float64}
+end
+
+
 
 #sfera, ravnina, torus
 #ravnina
