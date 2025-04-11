@@ -1,0 +1,2 @@
+
+#sfera, ravnina, torus
