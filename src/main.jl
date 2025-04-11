@@ -1,4 +1,4 @@
-using Images, FileIO, ColorTypes
+using Images, FileIO, ColorTypes, StaticArrays
 
 
 #------------najbolj osnovne stvari
