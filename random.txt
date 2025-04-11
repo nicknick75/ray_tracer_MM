@@ -1,0 +1,5 @@
+za poganjanje v terminalu:
+
+julia --project=.
+include("src/main.jl")
+main() 
