@@ -1,3 +1,4 @@
+abstract type Object end
 struct Ray
     origin::Vector{Float64}
     direction::Vector{Float64}
