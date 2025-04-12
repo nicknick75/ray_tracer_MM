@@ -45,11 +45,16 @@ function  interseption(F, J, ray, T)
     return T1
 end
 
-#nevem ce dela cist prov
+#=nevem ce dela cist prov
 function colorCos1(normal, v)
     angle = acos(dot(normal,v)/(norm(normal)*norm(v)))
     value = abs(angle/(pi))
     return RGB{N0f8}(value, value, value)
+end=#
+
+function lambert_shading(normal, lightDirection)
+    intensity = clamp(dot(normalize(normal), normalize(lightDirection)), 0.0, 1.0)
+    return RGB{N0f8}(intensity, intensity, intensity)
 end
 
 
@@ -74,7 +79,14 @@ function raytrace(Ray, objects)
                 N = objects[i].J(T)
                 n = normalize([N[1], N[2], N[3]])
                 p = r - 2*(dot(r,n)/dot(n,n))*n # p = reflected ray
-                return colorCos1(n, normalize(p))
+                
+                light = cam.p #luc iz kamere
+                L = normalize(light .- T)  # smer od točke trka proti luči
+                return lambert_shading(n, L)
+
+                
+                #return colorCos1(n, normalize(p))
+
                 # return RGB{N0f8}(0, 0, 0) # crna
                 break; #trenutno se ne odbije in samo obarva crno ce zadane objekt
             end
