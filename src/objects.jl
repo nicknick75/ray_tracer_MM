@@ -35,7 +35,7 @@ end
 #sfera 
 function Sphere(a, b, c, r)
     F(X) = (X[1] - a)^2 + (X[2] - b)^2 + (X[3] - c)^2 - r^2
-    J(X) = [2*X[1], 2*X[2], 2*X[3]]
+    J(X) = [2*(X[1] - a), 2*(X[2] - b), 2*(X[3] - c)]
     return Sphere(a, b, c, r, F, J)
 end
 
