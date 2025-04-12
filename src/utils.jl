@@ -37,11 +37,16 @@ end
 
 #intersection 
 # t = (t1 + t2)/ 2
-function  interseption(F, J, ray, t)
-    X0 = Ray(t)
-    G_D(X) = Ray.direction * J(X)
-    T = newton(F, G_D, X0).X
+function  interseption(F, J, ray, T)
+    #X0 = T
+    G_D(X) = ray.direction * J(X) #funkcija odvoda
+    T1 = newton(F, G_D, T).X
+    return T1
 end
+
+# function colorCos1()
+
+# end
 
 #objects = [s,r] --> s = Sphere(...) ,...
 
@@ -49,7 +54,8 @@ end
 #sing(x) --> -1 if x <0 0 if x === 0 1 if x > 0
 function raytrace(Ray, objects)
     t1, t2 = 0
-    values = [sign(s.f(ray(t))) for s in objects]
+    ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
+    values = [sign(s.f(ray(t1))) for s in objects]
     T = [0;0;0] #inicialzacije tocke za interseption
     while t < 100
         t2 += 0.5 #incremention of t
@@ -57,8 +63,12 @@ function raytrace(Ray, objects)
         for i in eachindex(objects)
             if values[i] != sing(objects[i].f(r)) #sprememba predznaka
                 t = (t1 + t2) / 2
-                T = interseption(objects[i].f, objects[i].j, ray, t)
+                T = interseption(objects[i].f, objects[i].j, Ray, ray(t)) #ray(t) = približek točke
                 #color funkcija
+                # N = objects[i].J(T)
+                # n = [N[1], N[2], N[3]]'
+                # p = r - 2*(dot(r,n)/dot(n,n))*n # p = reflected ray
+                
                 return RGB{N0f8}(0, 0, 0) # crna
                 break; #trenutno se ne odbije in samo obarva crno ce zadane objekt
             end
@@ -67,4 +77,7 @@ function raytrace(Ray, objects)
     end
     return RGB{N0f8}(1, 1, 1) # bela
 end
+
+
+
 
