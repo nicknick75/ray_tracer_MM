@@ -7,7 +7,7 @@ end
 
 #sfera, ravnina, torus
 #ravnina
-struct Plane
+struct Plane <: Object
     a::Float64
     b::Float64
     c::Float64
@@ -22,7 +22,7 @@ function Plane(a, b, c, d)
     return Plane(a, b, c, d, F, J)
 end
 
-struct Sphere
+struct Sphere <: Object
     a::Float64
     b::Float64
     c::Float64
