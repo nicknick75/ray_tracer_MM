@@ -58,6 +58,31 @@ function lambert_shading(normal, lightDirection)
     return RGB{N0f8}(intensity, intensity, intensity)
 end
 
+function v_senci(point, light_pos, objects)
+    dir = normalize(light_pos .- point) #smer svetlobe
+    shadow_ray = Ray(point .+ 1e-4 * dir, dir) #majhen premik, da ne trcis z isto
+
+    # pogledas za vse obj, ce so na poti
+    for obj in objects
+        t1 = 0.0 #zac in konec                
+        t2 = 0.0                
+        
+        while t2 < norm(light_pos - point)
+            t2 += 0.1
+            # tocki na zarku
+            p1 = shadow_ray.origin + t1 * shadow_ray.direction
+            p2 = shadow_ray.origin + t2 * shadow_ray.direction
+            # objekt preseka žarek med p1 in p2? senca
+            if sign(obj.F(p1)) != sign(obj.F(p2))
+                return true
+            end
+            t1 = t2
+        end
+    end
+    return false
+end
+
+ 
 
 
 #objects = [s,r] --> s = Sphere(...) ,...
