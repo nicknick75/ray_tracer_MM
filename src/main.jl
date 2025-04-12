@@ -10,10 +10,12 @@ using Images, FileIO, ColorTypes, StaticArrays
 #render funkcija: da dejansko generira sliko 
 #trenutno placeholder
 function render(sirina, visina) 
-    img = Array{RGB{N0f8}}(undef, sirina, visina)
+    img = Array{RGB{N0f8}}(undef, cam.nx, cam.ny) #za kamero 
 
-    for y in 1:sirina, x in 1:visina
-        img[y, x] = RGB{N0f8}(0.3, 0.5, 0.3)
+    for j in 1:cam.ny, i in 1:cam.nx
+        ray = generate_ray(cam, i, j)
+        color = raytrace(ray, objects)
+        img[i, j] = color
     end
 
     return img
