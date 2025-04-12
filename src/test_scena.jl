@@ -18,7 +18,7 @@ include("utils.jl")
 function render(sirina, visina) 
     # kamera setup
     p = [0.0, 0.0, 0.0]
-    look_at = [0.0, 0.0, -5.0]
+    look_at = [0.0, 0.0, 5.0]
     up = [0.0, 1.0, 0.0]
 
     w = normalize(look_at .- p)
@@ -37,7 +37,7 @@ function render(sirina, visina)
 
     cam = Camera(p, x, y, w, left, right, bottom, top, d, sirina, visina)
     img = Array{RGB{N0f8}}(undef, cam.nx, cam.ny) #za kamero 
-    sfera = Sphere(0.0, 0.0, -5.0, 2.0)  # sredina na Z = -5, radij = 1
+    sfera = Sphere(0.0, 0.0, 5.0, 2.0)  # sredina na Z = -5, radij = 1
     objects =[sfera]
     for j in 1:cam.ny, i in 1:cam.nx
         ray = generate_ray(cam, i, j)
