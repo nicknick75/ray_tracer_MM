@@ -1,10 +1,5 @@
 using LinearAlgebra
 
-#= 
-    Kamera definira: s kod zarki ivirajo, v katero smer se piksli vidijo, kak velik (pa kje)
-    je image plane 
-=#
-
 
 struct Camera
     p::Vector{Float64}      # pozicija 
@@ -19,6 +14,14 @@ struct Camera
     nx::Int                 # width (piksl)
     ny::Int                 # height(piks)
 end
+
+
+
+
+#= 
+    Kamera definira: s kod zarki ivirajo, v katero smer se piksli vidijo, kak velik (pa kje)
+    je image plane 
+=#
 
 #smiselno met neko funkcijo, ki bi generirala zarek na dolocenem pikslu
 

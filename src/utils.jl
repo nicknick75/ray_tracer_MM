@@ -1,10 +1,8 @@
 #nevem kam tocno dati lahko kopirava v druge datoteke
 using ColorTypes, LinearAlgebra
 #= 
-    Okej to je zaenkrat tako napol psevdokoda ker nevem se tocno kako bo zgledal ray ko bo sel iz kamere.
-    Ampak v teoriji bi lahko delal. Moja ideja je da v raytrace funkcijo das listo objektov in pa ray, ta pa ti
-    vrne barvo piksla. Zaenkrat bo samo pobarvala na črno če je zadela objekt in belo če ga ni (v teoriji). Potem 
-    ko bova imele kamero pa to bom debugirala ker verjetno bo imela pol errorjev. 
+    Po debagiranju zgleda takole ampak pomoje je se zmeraj nekaj narobe ker bi sfera morala biti osencena povsod ampak
+    vsaj narise krog tko da nek intersepciton ze dela
 =#
 
 #newton funkcija iz vaj 
@@ -47,16 +45,13 @@ function  interseption(F, J, ray, T)
     return T1
 end
 
+#nevem ce dela cist prov
 function colorCos1(normal, v)
     angle = acos(dot(normal,v)/(norm(normal)*norm(v)))
     value = abs(angle/(pi))
-    #value = clamp(angle, 0.0, 1.0)
     return RGB{N0f8}(value, value, value)
 end
-# function colorCos1(normal, v)
-#     cosine_value = abs(dot(normal, v) / (norm(normal) * norm(v)))  # Cosine of the angle
-#     return RGB{N0f8}(0, cosine_value, 0)  # Green based on cosine value
-# end
+
 
 #objects = [s,r] --> s = Sphere(...) ,...
 
