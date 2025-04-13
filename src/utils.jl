@@ -46,12 +46,32 @@ function  interseption(F, J, Ray, t)
     return result
 end
 
-function lambert_shading(normal, lightDirection, color)
+
+#=function lambert_shading(normal, lightDirection, color)
     intensity = clamp(dot(normalize(normal), normalize(lightDirection)), 0.0, 1.0)
     c = RGB{Float64}(color);
     scaled_color = intensity * c
     return RGB{N0f8}(scaled_color)
+end =#
+
+
+function lambert_shading(normal, lightDirection, color)
+    n = normalize(normal)
+    l = normalize(lightDirection)
+
+    if any(isnan.(n)) || any(isnan.(l))
+        return RGB{N0f8}(0.0, 0.0, 0.0)  # črna kot fallback, ce se kak vektor pokvari
+    end
+
+    intensity = clamp(dot(n, l), 0.0, 1.0)
+    c = RGB{Float64}(color)
+    scaled_color = intensity * c
+    return RGB{N0f8}(scaled_color)
 end
+
+
+
+
 
 function v_senci(point, light_pos, objects)
     dir = normalize(light_pos .- point) #smer svetlobe
