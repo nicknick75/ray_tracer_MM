@@ -17,7 +17,7 @@ function render(cam::Camera, objects)
 
     for j in 1:cam.ny, i in 1:cam.nx
         ray = generate_ray(cam, i, j)
-        color = raytrace(ray, objects)
+        color = raytrace(ray, objects, cam)
         img[i, j] = color
     end
 
@@ -25,7 +25,7 @@ function render(cam::Camera, objects)
 end
  
 function look(perspective, target, up)
-    w = normalize(perspective .- target)
+    w = normalize(target .- perspective)
     x = normalize(cross(up, w))
     y = cross(w, x)
     return x, y, w
@@ -34,8 +34,8 @@ end
 
 function main()  
     # Kamera setup
-    perspective = [0.0, 0.0, -5.0]
-    target = [0.0, 0.0, 0.0]
+    perspective = [0.0, 0.0, 0.0]
+    target = [0.0, 0.0, 5.0]
     up = [0.0, 1.0, 0.0]
     x, y, w = look(perspective, target, up)
 
@@ -49,9 +49,10 @@ function main()
     )
 
     # Scena
-    sphere = Sphere(0.0, 0.0, 0.0, 1.0)
-    plane = Plane(0.0, 1.0, 0.0, -1.0)
-    objects = [sphere, plane]
+    sphere = Sphere(0.0, 1.0, 5.0, 2.0,RGB{N0f8}(1,1,1))
+    sphere2 = Sphere(0.0, -2.0, 5.0, 1.0,RGB{N0f8}(1,0,0))
+    #plane = Plane(0.0, 1.0, 0.0, -1.0)
+    objects = [sphere, sphere2]
 
     # Render
     img = render(cam, objects)

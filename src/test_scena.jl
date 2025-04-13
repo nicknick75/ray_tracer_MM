@@ -37,8 +37,8 @@ function render(sirina, visina)
 
     cam = Camera(p, x, y, w, left, right, bottom, top, d, sirina, visina)
     img = Array{RGB{N0f8}}(undef, cam.nx, cam.ny) #za kamero 
-    sfera = Sphere(0.0, 0.0, 5.0, 2.0)  # sredina na Z = -5, radij = 1
-    sfera2 = Sphere(0.0, 1.0, 2.0, 1.0)
+    sfera = Sphere(0.0, 0.0, 5.0, 2.0, RGB{N0f8}(1,1,1))  # sredina na Z = -5, radij = 1
+    #sfera2 = Sphere(0.0, 1.0, 2.0, 1.0)
     # sfera3 = Sphere(1.0, 0.0, 2.0, 1.0)
     #plane = Plane(1.0, 1.0, 1.0, 5.0)
     objects =[sfera]

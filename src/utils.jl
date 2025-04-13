@@ -46,16 +46,11 @@ function  interseption(F, J, Ray, t)
     return result
 end
 
-#nevem ce dela cist prov
-# function colorCos1(normal, v)
-#     cosinus = max(0,dot(normal,v))
-#     d = 1 * cosinus
-#     return RGB{N0f8}(d, d, d)
-# end
-
-function lambert_shading(normal, lightDirection)
+function lambert_shading(normal, lightDirection, color)
     intensity = clamp(dot(normalize(normal), normalize(lightDirection)), 0.0, 1.0)
-    return RGB{N0f8}(intensity, intensity, intensity)
+    c = RGB{Float64}(color);
+    scaled_color = intensity * c
+    return RGB{N0f8}(scaled_color)
 end
 
 function v_senci(point, light_pos, objects)
@@ -95,8 +90,8 @@ function raytrace(Ray, objects, Camera)
     ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
     values = [sign(s.F(ray(t1))) for s in objects]
     T = [0;0;0] #inicialzacije tocke za interseption
-    while t2 <= 5
-        t2 += 0.5 #incremention of t
+    while t2 <= 10
+        t2 += 0.1 #incremention of t
         r = ray(t2)
         for i in eachindex(objects)
             if values[i] != sign(objects[i].F(r)) #sprememba predznaka
@@ -104,22 +99,22 @@ function raytrace(Ray, objects, Camera)
                 (t, num) = interseption(objects[i].F, objects[i].J, Ray, t) #ray(t) = približek točke
                 #color funkcija
                 T = ray(t)
-                N = objects[i].J(T)
-                n = normalize(N)
-                r2 = r - 2*(dot(r,n)/dot(n,n))*n # r2 = reflected ray
-                
-                light = Camera.p #luc iz kamere
+                n = normalize(objects[i].J(T))
+                v = normalize(Ray.direction)
+                r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray
+                light = [5.0, 5.0, -10.0]
+                #light = Camera.p #luc iz kamere ta svetloba bo zmeraj samo v predmet
                 L = normalize(light .- T)  # smer od točke trka proti luči
-                return lambert_shading(n, L)
+                return lambert_shading(n, L, objects[i].color)
                 #return lambert_shading(r2, L)                
                 #return colorCos1(n, normalize(p))
-                #return RGB{N0f8}(1, 1, 1) # crna
+                #return RGB{N0f8}(0, 1, 0) # crna
                 break; #trenutno se ne odbije in samo obarva crno ce zadane objekt
             end
         end
         t1 = t2
     end
-    return RGB{N0f8}(0,0, 0) # crna
+    return RGB{N0f8}(1,1, 1) # crna
 end
 
 
