@@ -70,9 +70,6 @@ function lambert_shading(normal, lightDirection, color)
 end
 
 
-
-
-
 function v_senci(point, light_pos, objects)
     dir = normalize(light_pos .- point) #smer svetlobe
     shadow_ray = Ray(point .+ 1e-4 * dir, dir) #majhen premik, da ne trcis z isto
@@ -95,9 +92,8 @@ function v_senci(point, light_pos, objects)
         end
     end
     return false
-end
+end 
 
- 
 
 
 #objects = [s,r] --> s = Sphere(...) ,...
@@ -128,9 +124,25 @@ function raytrace(Ray, objects, Camera, light_source)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
                 L = normalize(light_source .- T)  # smer od točke trka proti luči
                 rL = normalize(-L - 2*(dot((-L),n)/dot(n,n))*n)
+
+
+                #=ne deluje se cist prav, celo stvar zatemni
+                    pomojem sem premajhen offset nastavila in zaznava senco povsod
+                
+                if v_senci(T, light_source, objects)
+                    # ambientni del - temneje
+                    ambient = 0.2
+                    c = RGB{Float64}(objects[i].color)
+                    scaled = ambient * c
+                    return RGB{N0f8}(scaled)
+                else
+                    return lambert_shading(n, L, objects[i].color)
+                end =#
+
                 return lambert_shading(n, L, objects[i].color)
                 #return lambert_shading(r2, L, objects[i].color)
                 #return RGB{N0f8}(0, 1, 0) # crna
+
                 break;
             end
         end
