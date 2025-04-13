@@ -4,7 +4,6 @@ include("camera.jl")
 include("objects.jl")
 include("utils.jl")
 
-
 function render(sirina, visina)
     p = [0.0, 0.0, -2.0]            
     look_at = [5.0, 0.0, 0.0]        
