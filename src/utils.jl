@@ -1,9 +1,4 @@
-#nevem kam tocno dati lahko kopirava v druge datoteke
 using ColorTypes, LinearAlgebra
-#= 
-    Po debagiranju zgleda takole ampak pomoje je se zmeraj nekaj narobe ker bi sfera morala biti osencena povsod ampak
-    vsaj narise krog tko da nek intersepciton ze dela
-=#
 
 #newton funkcija iz vaj 
 function newton(F, JF, Ray, t0; tol = 1e-8, maxit = 100)
@@ -12,21 +7,17 @@ function newton(F, JF, Ray, t0; tol = 1e-8, maxit = 100)
     t = t0
     n = 1
     # first evaluation of F
-    # Y = F(X)
     Y = F(ray(t))
-    #println(Y)
     for outer n = 1:maxit    
         t = t0 - JF(t0)\Y
         Y = F(ray(t))
         # check if the result is within prescribed tolerance
-        #if norm(X-X0) + norm(Y) < tol
         if norm(t-t0) < tol #spustimo clen Y
             break;
         end
         # otherwise repeat
         t0 = t
     end
-
     # a warning if maxit was reached
     if n == maxit
         @warn "no convergence after $maxit iterations"
@@ -46,14 +37,7 @@ function  interseption(F, J, Ray, t)
     return result
 end
 
-
-#=function lambert_shading(normal, lightDirection, color)
-    intensity = clamp(dot(normalize(normal), normalize(lightDirection)), 0.0, 1.0)
-    c = RGB{Float64}(color);
-    scaled_color = intensity * c
-    return RGB{N0f8}(scaled_color)
-end =#
-
+#SHADING MODELS
 
 function lambert_shading(normal, lightDirection, color)
     n = normalize(normal)
@@ -69,7 +53,25 @@ function lambert_shading(normal, lightDirection, color)
     return RGB{N0f8}(scaled_color)
 end
 
+function Phong_shading(light, ray_ref, p)
+    l = normalize(light)
+    rf = normalize(ray_ref)
 
+    if any(isnan.(rf)) || any(isnan.(l))
+        return RGB{N0f8}(0.0, 0.0, 0.0)  # črna kot fallback, ce se kak vektor pokvari
+    end
+
+    intensity = clamp((max(dot(rf, l), 0))^p, 0.0, 1.0) #p pomeni stopnjo refleksivnosti pri 1 bo bela lisa največja pri 256 najmanjša
+    return RGB{N0f8}(intensity, intensity, intensity) #samo črno/belo 
+end
+
+function shadingCombined(reflected, normal, lightDirection, color, p)
+    lambert = lambert_shading(normal, lightDirection, color)
+    phong = Phong_shading(lightDirection, reflected, p)
+    sum = RGB{Float64}(lambert) + RGB{Float64}(phong)  #kombinacija
+    color = RGB{N0f8}(RGB(clamp01.(sum)))
+    return color
+end
 
 
 
@@ -99,11 +101,7 @@ end
 
  
 
-
-#objects = [s,r] --> s = Sphere(...) ,...
-
-#values = [s.f(ray(0)), ...]7
-#sing(x) --> -1 if x <0 0 if x === 0 1 if x > 0
+#raytrace function no ray bouncing 
 function raytrace(Ray, objects, Camera, light_source)
     t1 = 0
     t2 = 0
@@ -117,26 +115,28 @@ function raytrace(Ray, objects, Camera, light_source)
             if values[i] != sign(objects[i].F(r)) #sprememba predznaka
                 t = (t1 + t2) / 2
                 (t, num) = interseption(objects[i].F, objects[i].J, Ray, t) #ray(t) = približek točke
-                #color funkcija
                 T = ray(t)
                 n = normalize(objects[i].J(T))
                 #zaradi ravnnin ce normala kaze v smeri zarka
                 if dot(n, Ray.direction) > 0
                     n = -n
                 end
+
                 v = normalize(Ray.direction)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
                 L = normalize(light_source .- T)  # smer od točke trka proti luči
-                rL = normalize(-L - 2*(dot((-L),n)/dot(n,n))*n)
-                return lambert_shading(n, L, objects[i].color)
-                #return lambert_shading(r2, L, objects[i].color)
+
+                #color funkcije
+                #return lambert_shading(n, L, objects[i].color) # 1st problem solution 
+                #return Phong_shading(L, r2, 8) #second problem solution (p must be 1)
+                return shadingCombined(r2, n, L, objects[i].color, 32) #second problem solution
                 #return RGB{N0f8}(0, 1, 0) # crna
                 break;
             end
         end
         t1 = t2
     end
-    return RGB{N0f8}(1,1, 1) # crna
+    return RGB{N0f8}(0,0, 0) # crna
 end
 
 
