@@ -38,10 +38,13 @@ function render(sirina, visina)
     cam = Camera(p, x, y, w, left, right, bottom, top, d, sirina, visina)
     img = Array{RGB{N0f8}}(undef, cam.nx, cam.ny) #za kamero 
     sfera = Sphere(0.0, 0.0, 5.0, 2.0)  # sredina na Z = -5, radij = 1
+    sfera2 = Sphere(0.0, 1.0, 2.0, 1.0)
+    # sfera3 = Sphere(1.0, 0.0, 2.0, 1.0)
+    #plane = Plane(1.0, 1.0, 1.0, 5.0)
     objects =[sfera]
     for j in 1:cam.ny, i in 1:cam.nx
         ray = generate_ray(cam, i, j)
-        color = raytrace(ray, objects)
+        color = raytrace(ray, objects, cam)
         img[i, j] = color
     end
 
@@ -50,7 +53,7 @@ end
 
 
 function main()  
-    sirina, visina = 400, 400
+    sirina, visina = 500, 500
     img = render(sirina, visina)
     save("../images/render.png", img)
 end

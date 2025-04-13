@@ -47,11 +47,11 @@ function  interseption(F, J, Ray, t)
 end
 
 #nevem ce dela cist prov
-function colorCos1(normal, v)
-    cosinus = max(0,dot(normal,v))
-    d = 1 * cosinus
-    return RGB{N0f8}(d, d, d)
-end
+# function colorCos1(normal, v)
+#     cosinus = max(0,dot(normal,v))
+#     d = 1 * cosinus
+#     return RGB{N0f8}(d, d, d)
+# end
 
 function lambert_shading(normal, lightDirection)
     intensity = clamp(dot(normalize(normal), normalize(lightDirection)), 0.0, 1.0)
@@ -64,7 +64,7 @@ end
 
 #values = [s.f(ray(0)), ...]7
 #sing(x) --> -1 if x <0 0 if x === 0 1 if x > 0
-function raytrace(Ray, objects)
+function raytrace(Ray, objects, Camera)
     t1 = 0
     t2 = 0
     ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
@@ -81,12 +81,13 @@ function raytrace(Ray, objects)
                 T = ray(t)
                 N = objects[i].J(T)
                 n = normalize(N)
-                p = r - 2*(dot(r,n)/dot(n,n))*n # p = reflected ray
+                r2 = r - 2*(dot(r,n)/dot(n,n))*n # r2 = reflected ray
                 
-                # light = cam.p #luc iz kamere
-                # L = normalize(light .- T)  # smer od točke trka proti luči
-                # return lambert_shading(n, L)
-                return colorCos1(n, normalize(p))
+                light = Camera.p #luc iz kamere
+                L = normalize(light .- T)  # smer od točke trka proti luči
+                return lambert_shading(n, L)
+                #return lambert_shading(r2, L)                
+                #return colorCos1(n, normalize(p))
                 #return RGB{N0f8}(1, 1, 1) # crna
                 break; #trenutno se ne odbije in samo obarva crno ce zadane objekt
             end
