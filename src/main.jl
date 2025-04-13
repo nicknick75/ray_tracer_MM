@@ -54,8 +54,9 @@ function main()
     # Scena
     sphere = Sphere(0.0, 1.0, 5.0, 2.0,RGB{N0f8}(1,0.329,0.686))
     sphere2 = Sphere(0.0, 0.0, 3.0, 1.0,RGB{N0f8}(1,0.757,0.369))
-    #plane = Plane(0.0, 1.0, 0.0, -1.0)
-    objects = [sphere, sphere2]
+    plane = Plane(0.0, -0.5, 1.0, 5.0, RGB{N0f8}(0,0.77,0))
+    #plane2 = Plane( 0.0, -6.0, 0.20, 5 ,RGB{N0f8}(0,0,0.77))
+    objects = [sphere, sphere2, plane]
 
     # Render
     img = render(cam, objects, light_source)

@@ -90,7 +90,7 @@ function raytrace(Ray, objects, Camera, light_source)
     ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
     values = [sign(s.F(ray(t1))) for s in objects]
     T = [0;0;0] #inicialzacije tocke za interseption
-    while t2 <= 10
+    while t2 <= 50
         t2 += 0.1 #incremention of t
         r = ray(t2)
         for i in eachindex(objects)
@@ -100,11 +100,16 @@ function raytrace(Ray, objects, Camera, light_source)
                 #color funkcija
                 T = ray(t)
                 n = normalize(objects[i].J(T))
+                #zaradi ravnnin ce normala kaze v smeri zarka
+                if dot(n, Ray.direction) > 0
+                    n = -n
+                end
                 v = normalize(Ray.direction)
-                r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray
-                # light = [5.0, 5.0, -10.0]
+                r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
                 L = normalize(light_source .- T)  # smer od točke trka proti luči
+                rL = normalize(-L - 2*(dot((-L),n)/dot(n,n))*n)
                 return lambert_shading(n, L, objects[i].color)
+                #return lambert_shading(r2, L, objects[i].color)
                 #return RGB{N0f8}(0, 1, 0) # crna
                 break;
             end
