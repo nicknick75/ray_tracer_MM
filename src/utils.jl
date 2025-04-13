@@ -125,7 +125,6 @@ function raytrace(Ray, objects, Camera, light_source)
                 v = normalize(Ray.direction)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
                 L = normalize(light_source .- T)  # smer od točke trka proti luči
-                rL = normalize(-L - 2*(dot((-L),n)/dot(n,n))*n)
 
 
                 #=ne deluje se cist prav, celo stvar zatemni
@@ -142,7 +141,6 @@ function raytrace(Ray, objects, Camera, light_source)
                 end =#
 
                 #return lambert_shading(n, L, objects[i].color)
-                #return lambert_shading(r2, L, objects[i].color)
                 #return Phong_shading(L, r2, 8) #second problem solution (p must be 1)
                 return shadingCombined(r2, n, L, objects[i].color, 32) #second problem solution
                 #return RGB{N0f8}(0, 1, 0) # crna
