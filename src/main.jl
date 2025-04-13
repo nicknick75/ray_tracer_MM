@@ -12,12 +12,12 @@ include("utils.jl")
 
 #render funkcija: da dejansko generira sliko
 #trenutno placeholder
-function render(cam::Camera, objects)
+function render(cam::Camera, objects, light_source)
     img = Array{RGB{N0f8}}(undef, cam.nx, cam.ny)
 
     for j in 1:cam.ny, i in 1:cam.nx
         ray = generate_ray(cam, i, j)
-        color = raytrace(ray, objects, cam)
+        color = raytrace(ray, objects, cam, light_source)
         img[i, j] = color
     end
 
@@ -48,14 +48,17 @@ function main()
         400, 400       # resolution
     )
 
+    #izvor svetolobe (light source)
+    light_source = [5.0, 5.0, -10.0]
+    
     # Scena
-    sphere = Sphere(0.0, 1.0, 5.0, 2.0,RGB{N0f8}(1,1,1))
-    sphere2 = Sphere(0.0, -2.0, 5.0, 1.0,RGB{N0f8}(1,0,0))
+    sphere = Sphere(0.0, 1.0, 5.0, 2.0,RGB{N0f8}(1,0.329,0.686))
+    sphere2 = Sphere(0.0, 0.0, 3.0, 1.0,RGB{N0f8}(1,0.757,0.369))
     #plane = Plane(0.0, 1.0, 0.0, -1.0)
     objects = [sphere, sphere2]
 
     # Render
-    img = render(cam, objects)
+    img = render(cam, objects, light_source)
     save("../images/render.png", img)
 
 end

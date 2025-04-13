@@ -84,7 +84,7 @@ end
 
 #values = [s.f(ray(0)), ...]7
 #sing(x) --> -1 if x <0 0 if x === 0 1 if x > 0
-function raytrace(Ray, objects, Camera)
+function raytrace(Ray, objects, Camera, light_source)
     t1 = 0
     t2 = 0
     ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
@@ -102,14 +102,11 @@ function raytrace(Ray, objects, Camera)
                 n = normalize(objects[i].J(T))
                 v = normalize(Ray.direction)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray
-                light = [5.0, 5.0, -10.0]
-                #light = Camera.p #luc iz kamere ta svetloba bo zmeraj samo v predmet
-                L = normalize(light .- T)  # smer od točke trka proti luči
+                # light = [5.0, 5.0, -10.0]
+                L = normalize(light_source .- T)  # smer od točke trka proti luči
                 return lambert_shading(n, L, objects[i].color)
-                #return lambert_shading(r2, L)                
-                #return colorCos1(n, normalize(p))
                 #return RGB{N0f8}(0, 1, 0) # crna
-                break; #trenutno se ne odbije in samo obarva crno ce zadane objekt
+                break;
             end
         end
         t1 = t2
