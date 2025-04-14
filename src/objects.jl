@@ -92,3 +92,26 @@ function Torus_side(R, r, center, color)
     end
     return Torus(R, r, center, shine, color, F, J)
 end
+
+struct Ellipsoid <: Object
+    a::Float64
+    b::Float64
+    c::Float64
+    rx::Float64
+    ry::Float64
+    rz::Float64
+    shine::Float64
+    color::RGB{N0f8}
+    F::Function
+    J::Function
+end
+
+function Ellipsoid(a, b, c, rx, ry, rz, shine, color)
+    F(X) = ((X[1] - a)/rx)^2 + ((X[2] - b)/ry)^2 + ((X[3] - c)/rz)^2 - 1
+    J(X) = [
+        2*(X[1] - a)/(rx^2),
+        2*(X[2] - b)/(ry^2),
+        2*(X[3] - c)/(rz^2)
+    ]
+    return Ellipsoid(a, b, c, rx, ry, rz, shine, color, F, J)
+end
