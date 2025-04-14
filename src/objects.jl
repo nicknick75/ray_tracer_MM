@@ -71,11 +71,11 @@ function Torus(R, r, center, shine, color)
         fz = 4*s*2z
         [fx, fy, fz]
     end
-    return Torus(R, r, center, color, F, J)
+    return Torus(R, r, center, shine, color, F, J)
 end
 
 
-function Torus_side(R, r, center, color)
+function Torus_side(R, r, center, shine, color)
     cx, cy, cz = center
     F(X) = begin
         x, y, z = X[1] - cx, X[2] - cy, X[3] - cz
