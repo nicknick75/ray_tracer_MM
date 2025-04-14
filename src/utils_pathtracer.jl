@@ -44,6 +44,16 @@ function pathtrace(ray, objects, light, depth, ambient, bounce_weight)
                 rand_dir = normalize(normal + randn(3))
                 new_ray = Ray(hit_point + 1e-4 * rand_dir, rand_dir)
 
+                    #= namesto random, reflectas
+                if objects[i].shine > 0.9
+                    reflect_dir = normalize(ray.direction - 2 * dot(ray.direction, normal) * normal)
+                    new_ray = Ray(hit_point + 1e-4 * reflect_dir, reflect_dir)
+                else
+                    rand_dir = normalize(normal + randn(3))
+                    new_ray = Ray(hit_point + 1e-4 * rand_dir, rand_dir)
+                end=#
+                
+
                 indirect_color = RGB{Float64}(pathtrace(new_ray, objects, light, depth - 1, ambient, bounce_weight)
 )
 
