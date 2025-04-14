@@ -142,6 +142,16 @@ function raytrace(Ray, objects, Camera, light_source, ambient; max_inc = 50)
                     scaled = ambient * c
                     return RGB{N0f8}(scaled)
                 else
+                    #=
+                    tu lahk dodama 
+                    if object.shine > ??
+                        reflected_ray = Ray(T .+ 1e-4 * r2, r2) - z odmikom
+                        reflected_color = raytrace(reflected_ray, objects, Camera, light_source, depth - 1) //da se ustavi reflect
+                        combined = 0.5 direkt + 0.5 combined
+                    else
+                        return direct
+                    -treba dodat se en parameter shine, da bi tak delovalo
+                    =#
                     return shadingCombined(r2, n, L, objects[i].color, objects[i].shine, ambient)
                 end 
                 #return lambert_shading(n, L, objects[i].color)
