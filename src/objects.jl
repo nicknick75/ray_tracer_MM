@@ -92,3 +92,59 @@ function Torus_side(R, r, center, shine, color)
     end
     return Torus(R, r, center, shine, color, F, J)
 end
+
+struct Ellipsoid <: Object
+    a::Float64
+    b::Float64
+    c::Float64
+    rx::Float64
+    ry::Float64
+    rz::Float64
+    shine::Float64
+    color::RGB{N0f8}
+    F::Function
+    J::Function
+end
+
+function Ellipsoid(a, b, c, rx, ry, rz, shine, color)
+    F(X) = ((X[1] - a)/rx)^2 + ((X[2] - b)/ry)^2 + ((X[3] - c)/rz)^2 - 1
+    J(X) = [
+        2*(X[1] - a)/(rx^2),
+        2*(X[2] - b)/(ry^2),
+        2*(X[3] - c)/(rz^2)
+    ]
+    return Ellipsoid(a, b, c, rx, ry, rz, shine, color, F, J)
+end
+
+#za u(x,y) = x^2sin(y)
+struct GraphOfFunction <: Object
+    u::Function
+    shine::Float64
+    color::RGB{N0f8}
+    F::Function
+    J::Function
+end
+
+function GraphOfFunction(u, shine, color)
+    F(X) = begin
+        x, y = X[1], X[2]
+        if !isfinite(x) || !isfinite(y)
+            return Inf 
+        end
+        return X[3] - u(x, y)
+    end
+
+    J(X) = begin
+        x, y = X[1], X[2]
+        if !isfinite(x) || !isfinite(y)
+            return [0.0, 0.0, 1.0]  # arbitrarna
+        end
+        # du/dx = 2x * sin(y), du/dy = x^2 * cos(y)
+        return [
+            -2 * x * sin(y),
+            -x^2 * cos(y),
+             1.0
+        ]
+    end
+    return GraphOfFunction(u, shine, color, F, J)
+end
