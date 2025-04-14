@@ -68,6 +68,9 @@ end
 function shadingCombined(reflected, normal, lightDirection, color, p)
     lambert = lambert_shading(normal, lightDirection, color)
     phong = Phong_shading(lightDirection, reflected, p)
+    if (p < 1.0) 
+        phong = RGB{N0f8}(0,0,0) #if object isn't shiny
+    end
     sum = RGB{Float64}(lambert) + RGB{Float64}(phong)  #kombinacija
     color = RGB{N0f8}(RGB(clamp01.(sum)))
     return color
@@ -139,12 +142,12 @@ function raytrace(Ray, objects, Camera, light_source)
                     return RGB{N0f8}(scaled)
                 else
                     return lambert_shading(n, L, objects[i].color)
-                end =#
-
+                end 
+                =#
                 #return lambert_shading(n, L, objects[i].color)
                 #return lambert_shading(r2, L, objects[i].color)
                 #return Phong_shading(L, r2, 8) #second problem solution (p must be 1)
-                return shadingCombined(r2, n, L, objects[i].color, 32) #second problem solution
+                return shadingCombined(r2, n, L, objects[i].color, objects[i].shine) #second problem solution
                 #return RGB{N0f8}(0, 1, 0) # crna
 
                 break;
@@ -154,7 +157,4 @@ function raytrace(Ray, objects, Camera, light_source)
     end
     return RGB{N0f8}(0,0, 0) # crna
 end
-
-
-
 
