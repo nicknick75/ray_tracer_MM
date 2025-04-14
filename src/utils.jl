@@ -76,31 +76,23 @@ function shadingCombined(reflected, normal, lightDirection, color, p)
     return color
 end
 
-
-
 function v_senci(point, light_pos, objects)
-    dir = normalize(light_pos .- point) #smer svetlobe
-    shadow_ray = Ray(point .+ 1e-4 * dir, dir) #majhen premik, da ne trcis z isto
+    dir = normalize(light_pos .- point)
+    light_dist = norm(light_pos - point)
+    shadow_ray = Ray(point .+ 1e-4 * dir, dir)
 
-    # pogledas za vse obj, ce so na poti
     for obj in objects
-        t1 = 0.0 #zac in konec                
-        t2 = 0.0                
-        
-        while t2 < norm(light_pos - point)
-            t2 += 0.1
-            # tocki na zarku
-            p1 = shadow_ray.origin + t1 * shadow_ray.direction
-            p2 = shadow_ray.origin + t2 * shadow_ray.direction
-            # objekt preseka žarek med p1 in p2? senca
-            if sign(obj.F(p1)) != sign(obj.F(p2))
-                return true
-            end
-            t1 = t2
+        # zacnes malo stran, da preskocis lasten objekt
+        t0 = 1.0
+        result = interseption(obj.F, obj.J, shadow_ray, t0)
+        if result.t > 0 && result.t < light_dist  # intersekcija pred svetlobnim virom
+            return true
         end
     end
+
     return false
-end 
+end
+
 
  
 
@@ -128,26 +120,20 @@ function raytrace(Ray, objects, Camera, light_source)
                 v = normalize(Ray.direction)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
                 L = normalize(light_source .- T)  # smer od točke trka proti luči
-                rL = normalize(-L - 2*(dot((-L),n)/dot(n,n))*n)
 
-
-                #=ne deluje se cist prav, celo stvar zatemni
-                    pomojem sem premajhen offset nastavila in zaznava senco povsod
-                
                 if v_senci(T, light_source, objects)
-                    # ambientni del - temneje
-                    ambient = 0.2
+                    # arbitrarno - 0.1 bo bolj temno, 0.3 bolj svetlo
+                    ambient = 0.1
                     c = RGB{Float64}(objects[i].color)
                     scaled = ambient * c
                     return RGB{N0f8}(scaled)
                 else
-                    return lambert_shading(n, L, objects[i].color)
+                    return shadingCombined(r2, n, L, objects[i].color, objects[i].shine)
                 end 
-                =#
                 #return lambert_shading(n, L, objects[i].color)
                 #return lambert_shading(r2, L, objects[i].color)
                 #return Phong_shading(L, r2, 8) #second problem solution (p must be 1)
-                return shadingCombined(r2, n, L, objects[i].color, objects[i].shine) #second problem solution
+                #return shadingCombined(r2, n, L, objects[i].color, objects[i].shine) brez sence
                 #return RGB{N0f8}(0, 1, 0) # crna
 
                 break;
