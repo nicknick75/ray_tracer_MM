@@ -78,18 +78,29 @@ end
 
 function v_senci(point, light_pos, objects)
     dir = normalize(light_pos .- point)
-    light_dist = norm(light_pos - point)
+    light_dist = norm(light_pos .- point)
     shadow_ray = Ray(point .+ 1e-4 * dir, dir)
-
-    for obj in objects
-        # zacnes malo stran, da preskocis lasten objekt
-        t0 = 1.0
-        result = interseption(obj.F, obj.J, shadow_ray, t0)
-        if result.t > 0 && result.t < light_dist  # intersekcija pred svetlobnim virom
-            return true
+    t = 0
+    ray(t) = shadow_ray.origin + t*shadow_ray.direction#shadow_ray ob casu t
+    values = [sign(s.F(ray(t))) for s in objects]
+    while t <= light_dist #to je sam za zdej konstanta
+        t += 0.1
+        r = ray(t)
+        for i in eachindex(objects)
+            if values[i] != sign(objects[i].F(r))
+                return true #zamenjava znaka == nekje se zabije ??
+            end
         end
     end
-
+    #Prejsna funkcija
+    # for obj in objects
+    #     # zacnes malo stran, da preskocis lasten objekt
+    #     t0 = 1.0
+    #     result = interseption(obj.F, obj.J, shadow_ray, t0)
+    #     if result.t > 0 && result.t < light_dist  # intersekcija pred svetlobnim virom
+    #         return true
+    #     end
+    # end
     return false
 end
 
@@ -97,14 +108,14 @@ end
  
 
 #raytrace function no ray bouncing 
-function raytrace(Ray, objects, Camera, light_source)
+function raytrace(Ray, objects, Camera, light_source, ambient; max_inc = 50)
     t1 = 0
     t2 = 0
     ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
     values = [sign(s.F(ray(t1))) for s in objects]
-    T = [0;0;0] #inicialzacije tocke za interseption
-    while t2 <= 50
-        t2 += 0.1 #incremention of t
+    T = [0,0,0] #inicialzacije tocke za interseption
+    while t2 <= max_inc
+        t2 += 0.05 #incremention of t
         r = ray(t2)
         for i in eachindex(objects)
             if values[i] != sign(objects[i].F(r)) #sprememba predznaka
@@ -123,7 +134,7 @@ function raytrace(Ray, objects, Camera, light_source)
 
                 if v_senci(T, light_source, objects)
                     # arbitrarno - 0.1 bo bolj temno, 0.3 bolj svetlo
-                    ambient = 0.1
+                    #ambient = 0.1
                     c = RGB{Float64}(objects[i].color)
                     scaled = ambient * c
                     return RGB{N0f8}(scaled)
@@ -133,7 +144,7 @@ function raytrace(Ray, objects, Camera, light_source)
                 #return lambert_shading(n, L, objects[i].color)
                 #return lambert_shading(r2, L, objects[i].color)
                 #return Phong_shading(L, r2, 8) #second problem solution (p must be 1)
-                #return shadingCombined(r2, n, L, objects[i].color, objects[i].shine) brez sence
+                # return shadingCombined(r2, n, L, objects[i].color, objects[i].shine)# brez sence
                 #return RGB{N0f8}(0, 1, 0) # crna
 
                 break;

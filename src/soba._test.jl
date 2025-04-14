@@ -21,7 +21,7 @@ function render(sirina, visina)
     right = image_width / 2
     bottom = -image_height / 2
     top = image_height / 2
-    d = 0.5
+    d = 0.8
 
     cam = Camera(p, x, y, w, left, right, bottom, top, d, sirina, visina)
     # cam = Camera(
@@ -31,18 +31,18 @@ function render(sirina, visina)
     #     1.0, sirina, visina
     # )
 
-    light_source = [1.0, 0.5, 0.0]
+    light_source = [-0.6, -1.0, 0.0]
 
-  
+
+    pink = RGB{N0f8}(1.0, 0.5, 0.8)
+    dark_gray = RGB{N0f8}(0.2, 0.2, 0.2)
+    light_gray = RGB{N0f8}(0.85, 0.85, 0.85)
+   
     red_sphere   = Sphere(-0.5, 0.0 , 2.0, 0.5, 32.0, RGB{N0f8}(1.0, 0.0, 0.0))   
-   green_sphere = Sphere(-0.7, -0.5, 1.3, 0.2, 8.0,RGB{N0f8}(0.0, 1.0, 0.0))   
+    green_sphere = Sphere(-0.7, -0.5, 1.3, 0.2, 8.0,RGB{N0f8}(0.0, 1.0, 0.0))   
+    #torus = Torus_side(0.3, 0.1, [-0.5, 0.0, 1.2], 32.0, pink)
 
-
-
-   dark_gray = RGB{N0f8}(0.2, 0.2, 0.2)
-   light_gray = RGB{N0f8}(0.85, 0.85, 0.85)
-
-   #wannabe stene
+   #stene
     floor   = Plane(1.0, 0.0, 0.0, -1.0, 0.0, dark_gray)        
     ceiling = Plane(1.0, 0.0, 0.0, 2.0, 0.0, light_gray)       
     left    = Plane(0.0, 1.0, 0.0, 2.0, 0.0, light_gray)       
@@ -50,12 +50,12 @@ function render(sirina, visina)
     back    = Plane(0.0, 0.0, 1.0, 5.0, 0.0, light_gray)     
 
 
-   objects = [red_sphere, green_sphere, back, floor, left, right, ceiling]
+   objects = [red_sphere, green_sphere, left, right, back, floor, ceiling]
    img = Array{RGB{N0f8}}(undef, cam.nx, cam.ny)
 
    for j in 1:cam.ny, i in 1:cam.nx
        ray = generate_ray(cam, i, j)
-       img[i, j] = raytrace(ray, objects, cam, light_source)
+       img[i, j] = raytrace(ray, objects, cam, light_source, 0.1)
    end
 
    return img
