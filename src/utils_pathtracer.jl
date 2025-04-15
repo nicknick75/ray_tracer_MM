@@ -56,7 +56,6 @@ function pathtrace(ray, objects, depth, ambient, bounce_weight; max_inc=50)
                 # @show cos
 
                 indirect_color = RGB{Float64}(pathtrace(new_ray,objects, depth - 1, ambient, bounce_weight; max_inc=max_inc))
-                dist = norm(, )
                 
                 #ndirect_color = RGB{Float64}(pathtrace(new_ray, objects, light, depth - 1, ambient, bounce_weight; max_inc=max_inc))
                 #final_color = RGB{Float64}(base_color.r+indirect_color.r*cos/pi, base_color.g+indirect_color.g*cos/pi, base_color.b+indirect_color.b*cos/pi)
@@ -64,7 +63,7 @@ function pathtrace(ray, objects, depth, ambient, bounce_weight; max_inc=50)
                 #final_color = direct_color + bounce_weight * indirect_color
                 
                 #return RGB{N0f8}(clamp01.(color)); #črno bela slika
-                return RGB{N0f8}(clamp01.(final_color))
+                #return RGB{N0f8}(clamp01.(final_color))
             end
         end
         t1 = t2
