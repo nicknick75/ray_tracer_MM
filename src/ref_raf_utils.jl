@@ -50,7 +50,10 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
                     direct = RGB{N0f8}(ambient * RGB{Float64}(objects[i].color))
                 else
                     direct = shadingCombined(r2, n, L, objects[i].color, objects[i].shine, ambient)
+                    lambert = lambert_shading(n,L, objects[i].color) #za shiny predmete 
                 end
+
+                shiny = Phong_shading(L, r2, objects[i].shine) #nevem kam točno dati amapk če ni shine bo to itak 0.0.0
 
                 # ce je shiny + imas ray depth
                 is_reflective = objects[i].shine > 0.5 && depth > 0
@@ -62,7 +65,7 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
 
                 if is_reflective
                     reflected_ray = Ray(T .+ 1e-4 * r2, r2)
-                    reflected_color = raytrace(reflected_ray, objects, Camera, light_source, ambient; max_inc=max_inc, depth=depth - 1)
+                    reflected_color = ref_raf_raytrace(reflected_ray, objects, Camera, light_source, ambient; max_inc=max_inc, depth=depth - 1)
                 end
 
                 if is_transparent
@@ -72,16 +75,17 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
 
                     if refracted_dir !== nothing
                         refracted_ray = Ray(T .+ 1e-4 * refracted_dir, refracted_dir)
-                        refracted_color = raytrace(refracted_ray, objects, Camera, light_source, ambient; max_inc=max_inc, depth=depth - 1)
+                        refracted_color = ref_raf_raytrace(refracted_ray, objects, Camera, light_source, ambient; max_inc=max_inc, depth=depth - 1)
                     end
                 end
 
                 # kombiniraj scenarije
                 if is_reflective && is_transparent
-                    combined = 0.4 * RGB{Float64}(direct) + 0.3 * RGB{Float64}(reflected_color) + 0.3 * RGB{Float64}(refracted_color)
+
+                    combined = 0.4 * RGB{Float64}(lambert) + 0.3 * RGB{Float64}(reflected_color) + 0.3 * RGB{Float64}(refracted_color) + RGB{Float64}(shiny)
                     return RGB{N0f8}(clamp01.(combined))
                 elseif is_reflective
-                    combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(reflected_color)
+                    combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(reflected_color) + RGB{Float64}(shiny)
                     return RGB{N0f8}(clamp01.(combined))
                 elseif is_transparent
                     combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(refracted_color)
