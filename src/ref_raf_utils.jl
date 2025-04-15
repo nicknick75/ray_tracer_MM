@@ -81,11 +81,12 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
 
                 # kombiniraj scenarije
                 if is_reflective && is_transparent
-
+                    # combined = 0.4 * RGB{Float64}(direct) + 0.3 * RGB{Float64}(reflected_color) + 0.3 * RGB{Float64}(refracted_color)
                     combined = 0.4 * RGB{Float64}(lambert) + 0.3 * RGB{Float64}(reflected_color) + 0.3 * RGB{Float64}(refracted_color) + RGB{Float64}(shiny)
                     return RGB{N0f8}(clamp01.(combined))
                 elseif is_reflective
-                    combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(reflected_color) + RGB{Float64}(shiny)
+                    # combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(reflected_color) prejsna verzija
+                    combined = 0.5 * RGB{Float64}(lambert) + 0.5 * RGB{Float64}(reflected_color) + RGB{Float64}(shiny)
                     return RGB{N0f8}(clamp01.(combined))
                 elseif is_transparent
                     combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(refracted_color)
