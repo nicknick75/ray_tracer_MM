@@ -22,7 +22,7 @@ struct Plane <: Object
     light_source::Bool #when light is represented by Sphere
 end
 
-function Plane(a, b, c, d, shine, color; light_source=false)
+function Plane(a, b, c, d, shine, color, refraction, transparent; light_source=false)
     F(X) = a*X[1] + b*X[2] + c*X[3] - d
     J(X) = [a, b, c]
     return Plane(a, b, c, d, shine, color, refraction, transparent, F, J, light_source)
@@ -43,7 +43,7 @@ struct Sphere <: Object
 end
 
 #sfera 
-function Sphere(a, b, c, r, shine, color; light_source=false)
+function Sphere(a, b, c, r, shine, color, refraction, transparent; light_source=false)
     F(X) = (X[1] - a)^2 + (X[2] - b)^2 + (X[3] - c)^2 - r^2
     J(X) = [2*(X[1] - a), 2*(X[2] - b), 2*(X[3] - c)]
     return Sphere(a, b, c, r, shine, color, refraction, transparent, F, J, light_source)
@@ -64,7 +64,7 @@ struct Torus <: Object
 end
 
 # f(x, y, z) = (x^2 + y^2 + z^2 + R^2 - r^2)^2 - 4 * R^2 * (x^2 + y^2)
-function Torus(R, r, center, shine, color)
+function Torus(R, r, center, shine, color, refraction, transparent)
     cx, cy, cz = center
     F(X) = begin
         x, y, z = X[1] - cx, X[2] - cy, X[3] - cz
@@ -83,7 +83,7 @@ function Torus(R, r, center, shine, color)
 end
 
 
-function Torus_side(R, r, center, shine, color)
+function Torus_side(R, r, center, shine, color, refraction, transparent)
     cx, cy, cz = center
     F(X) = begin
         x, y, z = X[1] - cx, X[2] - cy, X[3] - cz
@@ -116,7 +116,7 @@ struct Ellipsoid <: Object
     J::Function
 end
 
-function Ellipsoid(a, b, c, rx, ry, rz, shine, color)
+function Ellipsoid(a, b, c, rx, ry, rz, shine, color, refraction, transparent)
     F(X) = ((X[1] - a)/rx)^2 + ((X[2] - b)/ry)^2 + ((X[3] - c)/rz)^2 - 1
     J(X) = [
         2*(X[1] - a)/(rx^2),
