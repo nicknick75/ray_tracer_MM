@@ -17,12 +17,13 @@ struct Plane <: Object
     color::RGB{N0f8}
     F::Function
     J::Function
+    light_source::Bool #when light is represented by Sphere
 end
 
-function Plane(a, b, c, d, shine, color)
+function Plane(a, b, c, d, shine, color; light_source=false)
     F(X) = a*X[1] + b*X[2] + c*X[3] - d
     J(X) = [a, b, c]
-    return Plane(a, b, c, d, shine, color, F, J)
+    return Plane(a, b, c, d, shine, color, F, J, light_source)
 end
 
 struct Sphere <: Object
@@ -34,13 +35,14 @@ struct Sphere <: Object
     color::RGB{N0f8}
     F::Function
     J::Function
+    light_source::Bool #when light is represented by Sphere
 end
 
 #sfera 
-function Sphere(a, b, c, r, shine, color)
+function Sphere(a, b, c, r, shine, color; light_source=false)
     F(X) = (X[1] - a)^2 + (X[2] - b)^2 + (X[3] - c)^2 - r^2
     J(X) = [2*(X[1] - a), 2*(X[2] - b), 2*(X[3] - c)]
-    return Sphere(a, b, c, r, shine, color, F, J)
+    return Sphere(a, b, c, r, shine, color, F, J, light_source)
 end
 
 
