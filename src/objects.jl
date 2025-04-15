@@ -15,6 +15,8 @@ struct Plane <: Object
     d::Float64
     shine::Float64
     color::RGB{N0f8}
+    refraction::Float64
+    transparent::Bool
     F::Function
     J::Function
     light_source::Bool #when light is represented by Sphere
@@ -23,7 +25,7 @@ end
 function Plane(a, b, c, d, shine, color; light_source=false)
     F(X) = a*X[1] + b*X[2] + c*X[3] - d
     J(X) = [a, b, c]
-    return Plane(a, b, c, d, shine, color, F, J, light_source)
+    return Plane(a, b, c, d, shine, color, refraction, transparent, F, J, light_source)
 end
 
 struct Sphere <: Object
@@ -33,6 +35,8 @@ struct Sphere <: Object
     r::Float64
     shine::Float64
     color::RGB{N0f8}
+    refraction::Float64
+    transparent::Bool
     F::Function
     J::Function
     light_source::Bool #when light is represented by Sphere
@@ -42,7 +46,7 @@ end
 function Sphere(a, b, c, r, shine, color; light_source=false)
     F(X) = (X[1] - a)^2 + (X[2] - b)^2 + (X[3] - c)^2 - r^2
     J(X) = [2*(X[1] - a), 2*(X[2] - b), 2*(X[3] - c)]
-    return Sphere(a, b, c, r, shine, color, F, J, light_source)
+    return Sphere(a, b, c, r, shine, color, refraction, transparent, F, J, light_source)
 end
 
 
@@ -53,6 +57,8 @@ struct Torus <: Object
     center::Vector{Float64}
     shine::Float64
     color::RGB{N0f8}
+    refraction::Float64
+    transparent::Bool
     F::Function
     J::Function
 end
@@ -73,7 +79,7 @@ function Torus(R, r, center, shine, color)
         fz = 4*s*2z
         [fx, fy, fz]
     end
-    return Torus(R, r, center, shine, color, F, J)
+    return Torus(R, r, center, shine, color, refraction, transparent, F, J)
 end
 
 
@@ -92,7 +98,7 @@ function Torus_side(R, r, center, shine, color)
         fz = 8 * z * s - 8 * R^2 * z
         [fx, fy, fz]
     end
-    return Torus(R, r, center, shine, color, F, J)
+    return Torus(R, r, center, shine, color, refraction, transparent, F, J)
 end
 
 struct Ellipsoid <: Object
@@ -104,6 +110,8 @@ struct Ellipsoid <: Object
     rz::Float64
     shine::Float64
     color::RGB{N0f8}
+    refraction::Float64
+    transparent::Bool
     F::Function
     J::Function
 end
@@ -115,7 +123,7 @@ function Ellipsoid(a, b, c, rx, ry, rz, shine, color)
         2*(X[2] - b)/(ry^2),
         2*(X[3] - c)/(rz^2)
     ]
-    return Ellipsoid(a, b, c, rx, ry, rz, shine, color, F, J)
+    return Ellipsoid(a, b, c, rx, ry, rz, shine, color, refraction, transparent, F, J)
 end
 
 #za u(x,y) = x^2sin(y)
