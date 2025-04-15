@@ -111,10 +111,10 @@ end
  
 
 #raytrace function no ray bouncing 
-function raytrace(Ray, objects, Camera, light_source, ambient; max_inc = 50)
+function raytrace(ray_obj, objects, Camera, light_source, ambient; max_inc = 50, depth = 2)
     t1 = 0
     t2 = 0
-    ray(t) = Ray.origin + t*Ray.direction #funkcija za racunanje zarka
+    ray(t) = ray_obj.origin + t*ray_obj.direction #funkcija za racunanje zarka
     values = [sign(s.F(ray(t1))) for s in objects]
     T = [0,0,0] #inicialzacije tocke za interseption
     while t2 <= max_inc
@@ -123,37 +123,60 @@ function raytrace(Ray, objects, Camera, light_source, ambient; max_inc = 50)
         for i in eachindex(objects)
             if values[i] != sign(objects[i].F(r)) #sprememba predznaka
                 t = (t1 + t2) / 2
-                (t, num) = interseption(objects[i].F, objects[i].J, Ray, t) #ray(t) = približek točke
+                (t, num) = interseption(objects[i].F, objects[i].J, ray_obj, t) #ray(t) = približek točke
                 T = ray(t)
                 n = normalize(objects[i].J(T))
                 #zaradi ravnnin ce normala kaze v smeri zarka
-                if dot(n, Ray.direction) > 0
+                if dot(n, ray_obj.direction) > 0
                     n = -n
                 end
 
-                v = normalize(Ray.direction)
+                v = normalize(ray_obj.direction)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
                 L = normalize(light_source .- T)  # smer od točke trka proti luči
 
+                
                 if v_senci(T, light_source, objects)
+                    # samo ambient komponenta brez direktne svetlobe
+                    direct = RGB{N0f8}(ambient * RGB{Float64}(objects[i].color))
+                else
+                    direct = shadingCombined(r2, n, L, objects[i].color, objects[i].shine, ambient)
+                end
+
+                # ce je shiny + imas ray depth
+                if objects[i].shine > 0.5 && depth > 0  # arbitrary threshold 
+                    reflected_ray = Ray(T .+ 1e-4 * r2, r2)  # offset, da nimas self hit
+                    reflected_color = raytrace(reflected_ray, objects, Camera, light_source, ambient; max_inc=max_inc, depth=depth - 1)
+                    combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(reflected_color)
+                    return RGB{N0f8}(clamp01.(combined))
+                else
+                    return direct
+                end
+            #-------------------------- prejsnja re
+               #= if v_senci(T, light_source, objects)
                     # arbitrarno - 0.1 bo bolj temno, 0.3 bolj svetlo
                     #ambient = 0.1
                     c = RGB{Float64}(objects[i].color)
                     scaled = ambient * c
                     return RGB{N0f8}(scaled)
                 else
-                    #=
-                    tu lahk dodama 
-                    if object.shine > ??
-                        reflected_ray = Ray(T .+ 1e-4 * r2, r2) - z odmikom
-                        reflected_color = raytrace(reflected_ray, objects, Camera, light_source, depth - 1) //da se ustavi reflect
-                        combined = 0.5 direkt + 0.5 combined
+
+                    direct = shadingCombined(r2, n, L, objects[i].color, objects[i].shine, ambient)
+
+                    # ce je shiny + imas ray depth
+                    if objects[i].shine > 0.5 && depth > 0  # arbitrary threshold 
+                        reflected_ray = Ray(T .+ 1e-4 * r2, r2)  # offest, da nimas self hit
+                        reflected_color = raytrace(reflected_ray, objects, Camera, light_source, ambient; max_inc=max_inc, depth=depth - 1)
+                        combined = 0.5 * RGB{Float64}(direct) + 0.5 * RGB{Float64}(reflected_color)
+                        return RGB{N0f8}(clamp01.(combined))
                     else
                         return direct
-                    -treba dodat se en parameter shine, da bi tak delovalo
-                    =#
-                    return shadingCombined(r2, n, L, objects[i].color, objects[i].shine, ambient)
-                end 
+                    end
+                end
+                -----------------------------------=#
+
+                    #return shadingCombined(r2, n, L, objects[i].color, objects[i].shine, ambient)
+                 
                 #return lambert_shading(n, L, objects[i].color)
                 #return lambert_shading(r2, L, objects[i].color)
                 #return Phong_shading(L, r2, 8) #second problem solution (p must be 1)
@@ -167,4 +190,3 @@ function raytrace(Ray, objects, Camera, light_source, ambient; max_inc = 50)
     end
     return RGB{N0f8}(0,0, 0) # crna
 end
-
