@@ -4,7 +4,7 @@ include("utils.jl")
 
 function pathtrace(ray, objects, depth, ambient; max_inc=50)
     if depth == 0
-        return RGB{N0f8}(0.0, 0.0, 0.0)  # Base case: crna
+        return RGB{N0f8}(0.0, 0.0, 0.0)  # Base case: black
     end
 
     t1 = 0.0
@@ -34,7 +34,7 @@ function pathtrace(ray, objects, depth, ambient; max_inc=50)
                 end
                 base_color = RGB{Float64}(objects[i].color)
 
-                # nakljucna smer odbitega žarka (approx cosine-weighted)  
+                # random direction of reflected ray (approx cosine-weighted)  
                 rand_dir = normalize(normal + randn(3))
                 new_ray = Ray(hit_point + 1e-4 * rand_dir, rand_dir)
 
