@@ -4,10 +4,6 @@ struct Ray
     direction::Vector{Float64}
 end
 
-
-
-#sfera, ravnina, torus
-#ravnina
 struct Plane <: Object
     a::Float64
     b::Float64
@@ -19,7 +15,7 @@ struct Plane <: Object
     transparent::Bool
     F::Function
     J::Function
-    light_source::Bool #when light is represented by Sphere
+    light_source::Bool 
 end
 
 function Plane(a, b, c, d, shine, color, refraction, transparent; light_source=false)
@@ -88,7 +84,7 @@ function Torus_side(R, r, center, shine, color, refraction, transparent)
     F(X) = begin
         x, y, z = X[1] - cx, X[2] - cy, X[3] - cz
         s = x^2 + y^2 + z^2 + R^2 - r^2
-        s^2 - 4 * R^2 * (z^2 + y^2)  #da je luknja v x
+        s^2 - 4 * R^2 * (z^2 + y^2) 
     end
     J(X) = begin
         x, y, z = X[1] - cx, X[2] - cy, X[3] - cz
@@ -147,7 +143,7 @@ function GraphOfFunction(u, shine, color)
     J(X) = begin
         x, y = X[1], X[2]
         if !isfinite(x) || !isfinite(y)
-            return [0.0, 0.0, 1.0]  # arbitrarna
+            return [0.0, 0.0, 1.0]  # arbitrary
         end
         # du/dx = 2x * sin(y), du/dy = x^2 * cos(y)
         return [
