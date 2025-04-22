@@ -12,7 +12,13 @@ This project implements a **basic ray tracer**, **advanced ray tracer** and **pa
 | `ref_raf_utils.jl` | Refraction and reflection handling |
 | `test.jl` | Example scenes |
 
-running:
-  include("main.jl") //or whatever the test name is
-  main()
+## How to Run 
 
+### 1. Open Julia, install the required packages, then run main (or test.jl)
+
+```julia
+using Pkg
+Pkg.add(["LinearAlgebra", "ColorTypes", "Images", "FileIO"])
+include("main.jl")
+main()
+```
