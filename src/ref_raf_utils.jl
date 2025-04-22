@@ -5,12 +5,12 @@ include("utils.jl")
 function refract(incoming, N, n1, n2)
     incoming = normalize(incoming)
     N = normalize(N)
-    eta = n1 / n2 #snell's zakon
+    eta = n1 / n2 #snell's law
     cos_i = -dot(N, incoming)
     sin2_t = eta^2 * (1.0 - cos_i^2)
 
     if sin2_t > 1.0
-        return nothing  #totalno interno
+        return nothing  #total internal
     end
 
     cos_t = sqrt(1.0 - sin2_t)
@@ -19,30 +19,30 @@ function refract(incoming, N, n1, n2)
 end
  
 
-#raytrayce z reflection in refraction opcijo
+#raytrayce with reflection, refraction 
 function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_inc = 50, depth = 2)
     t1 = 0
     t2 = 0
-    ray(t) = ray_obj.origin + t*ray_obj.direction #funkcija za racunanje zarka
+    ray(t) = ray_obj.origin + t*ray_obj.direction #calculating ray
     values = [sign(s.F(ray(t1))) for s in objects]
-    T = [0,0,0] #inicialzacije tocke za interseption
+    T = [0,0,0] 
     while t2 <= max_inc
         t2 += 0.05 #incremention of t
         r = ray(t2)
         for i in eachindex(objects)
-            if values[i] != sign(objects[i].F(r)) #sprememba predznaka
+            if values[i] != sign(objects[i].F(r)) #sign change
                 t = (t1 + t2) / 2
-                (t, num) = interseption(objects[i].F, objects[i].J, ray_obj, t) #ray(t) = približek točke
+                (t, num) = interseption(objects[i].F, objects[i].J, ray_obj, t) #ray(t) = approx
                 T = ray(t)
                 n = normalize(objects[i].J(T))
-                #zaradi ravnnin ce normala kaze v smeri zarka
+            
                 if dot(n, ray_obj.direction) > 0
                     n = -n
                 end
 
                 v = normalize(ray_obj.direction)
                 r2 = v - 2*(dot(v,n)/dot(n,n))*n # r2 = reflected ray 
-                L = normalize(light_source .- T)  # smer od točke trka proti luči
+                L = normalize(light_source .- T)  # from interception to light
 
                 
                 if v_senci(T, light_source, objects)
@@ -53,11 +53,11 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
                     lambert = lambert_shading(n,L, objects[i].color) #za shiny predmete 
                 end
 
-                shiny = Phong_shading(L, r2, objects[i].shine) #nevem kam točno dati amapk če ni shine bo to itak 0.0.0
+                shiny = Phong_shading(L, r2, objects[i].shine) 
 
-                # ce je shiny + imas ray depth
+            
                 is_reflective = objects[i].shine > 0.5 && depth > 0
-                # refraction?
+             
                 is_transparent = objects[i].transparent && depth > 0
 
                 reflected_color = RGB{N0f8}(0, 0, 0)
@@ -69,7 +69,7 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
                 end
 
                 if is_transparent
-                    n1 = 1.0  # zrak
+                    n1 = 1.0  
                     n2 = objects[i].refraction
                     refracted_dir = refract(-v, n, n1, n2)
 
@@ -79,7 +79,7 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
                     end
                 end
 
-                # kombiniraj scenarije
+                # combo
                 if is_reflective && is_transparent
                     # combined = 0.4 * RGB{Float64}(direct) + 0.3 * RGB{Float64}(reflected_color) + 0.3 * RGB{Float64}(refracted_color)
                     combined = 0.4 * RGB{Float64}(lambert) + 0.3 * RGB{Float64}(reflected_color) + 0.3 * RGB{Float64}(refracted_color) + RGB{Float64}(shiny)
@@ -98,5 +98,5 @@ function ref_raf_raytrace(ray_obj, objects, Camera, light_source, ambient; max_i
         end
         t1 = t2
     end
-    return RGB{N0f8}(0,0, 0) # crna
+    return RGB{N0f8}(0,0, 0) # fallback is black
 end
