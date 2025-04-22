@@ -1,5 +1,9 @@
 using LinearAlgebra
 
+#= 
+    Kamera definira: iz kod zarki izvirajo, v katero smer gledamo, kak velik (pa kje)
+    je image plane 
+=#
 
 struct Camera
     p::Vector{Float64}      # pozicija 
@@ -15,21 +19,10 @@ struct Camera
     ny::Int                 # height(piks)
 end
 
+function generate_ray(cam::Camera, i::Int, j::Int) 
 
-
-
-#= 
-    Kamera definira: s kod zarki ivirajo, v katero smer se piksli vidijo, kak velik (pa kje)
-    je image plane 
-=#
-
-#smiselno met neko funkcijo, ki bi generirala zarek na dolocenem pikslu
-
-function generate_ray(cam::Camera, i::Int, j::Int) #::Ray - ker vraca ray?
-
-    x = cam.lm + (cam.dm - cam.lm) * (i + 0.5) / cam.nx #zracunas x in y koord piksla
-    y = cam.sm + (cam.zm - cam.sm) * (j + 0.5) / cam.ny #0.5, da gres skoz sredino piksla 
-                                                        #nisem 100%, da je to potrebno
+    x = cam.lm + (cam.dm - cam.lm) * (i + 0.5) / cam.nx #izracunas x in y koord piksla
+    y = cam.sm + (cam.zm - cam.sm) * (j + 0.5) / cam.ny #0.5, da gres skozi sredino piksla 
     
     #generacija zarka iz pozicije
     pixelPosition = cam.p .+ cam.d .* cam.w .+ x .* cam.x .+ y .* cam.y #koordinata piksla v 3D prostoru
