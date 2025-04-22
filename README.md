@@ -1,14 +1,18 @@
-# ray_tracer_MM
-Ray tracing in Euclidean space 
+# Ray Tracer & Path Tracer in Julia
 
-raytracer/
-├── main.jl            # zagon + render loop
-├── camera.jl          # kamera
-├── ray.jl             # Ray struktura in funkcije
-├── objects.jl         # sfere, ravnine, grafi funkcij
-├── intersect.jl       # iskanje presečišč
-├── lighting.jl        # osvetlitev, refleksije, sence
-├── materials.jl       # barve, materiali
-├── utils.jl           # Newtonova metoda, vektorji ipd.
-├── render.jl          # generiranje slike
-└── images/            # rez
+This project implements a **basic ray tracer**, **advanced ray tracer** and **path tracer**.
+
+| File | Description |
+|------|-------------|
+| `main.jl` | Entry point 
+| `camera.jl` | Defines the `Camera` struct and ray generation |
+| `object.jl` | Implements abstract `Object` type and concrete subtypes (Sphere, Plane, etc.) |
+| `utils.jl` | Core rendering logic: ray tracing, Newton’s method, shading, shadows |
+| `utils_pathtracer.jl` | Path tracing |
+| `ref_raf_utils.jl` | Refraction and reflection handling |
+| `test.jl` | Example scenes |
+
+running:
+  include("main.jl") //or whatever the test name is
+  main()
+
